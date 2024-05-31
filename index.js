@@ -1,6 +1,5 @@
 class KnightMoves {
   constructor() {
-    this.moves = [];
     this.boardCoords = [];
   }
 
@@ -10,65 +9,94 @@ class KnightMoves {
     else return true;
   }
 
-  findShortestPath(move, finalCoords, minMoveCount) {
-    if (!this.isValidCord(move)) return;
-    if (move === finalCoords) return minMoveCount;
+  minValue(a, b) {
+    if (!a) return b;
+    if (!b) return a;
+    else return Math.min(a, b);
+  }
 
-    let moveCount;
+  isInBoardCoords = (move) => {
+    this.boardCoords.forEach((coords) => {
+      if (coords === move) return true;
+    });
+    return false;
+  };
 
-    moveCount = this.findShortestPath(
+  findShortestPath(move, finalCoords, moveCount) {
+    if (!this.isValidCord(move) || this.isInBoardCoords(move)) return null;
+
+    this.boardCoords.push(move);
+
+    if (move === finalCoords) return moveCount;
+
+    let maxMoveCount;
+    let minMoveCount = null;
+
+    maxMoveCount = this.findShortestPath(
       [move[0] + 2, move[1] + 1],
       finalCoords,
-      minMoveCount + 1,
+      moveCount + 1,
     );
+    minMoveCount = this.minValue(minMoveCount, maxMoveCount);
 
-    moveCount = this.findShortestPath(
+    maxMoveCount = this.findShortestPath(
       [move[0] + 1, move[1] + 2],
       finalCoords,
-      minMoveCount + 1,
+      moveCount + 1,
     );
+    minMoveCount = this.minValue(minMoveCount, maxMoveCount);
 
-    moveCount = this.findShortestPath(
+    maxMoveCount = this.findShortestPath(
       [move[0] + 2, move[1] - 1],
       finalCoords,
-      minMoveCount + 1,
+      moveCount + 1,
     );
+    minMoveCount = this.minValue(minMoveCount, maxMoveCount);
 
-    moveCount = this.findShortestPath(
+    maxMoveCount = this.findShortestPath(
       [move[0] + 1, move[1] - 1],
       finalCoords,
-      minMoveCount + 1,
+      moveCount + 1,
     );
+    minMoveCount = this.minValue(minMoveCount, maxMoveCount);
 
-    moveCount = this.findShortestPath(
+    maxMoveCount = this.findShortestPath(
       [move[0] - 2, move[1] - 1],
       finalCoords,
-      minMoveCount + 1,
+      moveCount + 1,
     );
+    minMoveCount = this.minValue(minMoveCount, maxMoveCount);
 
-    moveCount = this.findShortestPath(
+    maxMoveCount = this.findShortestPath(
       [move[0] - 1, move[1] - 2],
       finalCoords,
-      minMoveCount + 1,
+      moveCount + 1,
     );
+    minMoveCount = this.minValue(minMoveCount, maxMoveCount);
 
-    moveCount = this.findShortestPath(
+    maxMoveCount = this.findShortestPath(
       [move[0] - 2, move[1] + 1],
       finalCoords,
-      minMoveCount + 1,
+      moveCount + 1,
     );
+    minMoveCount = this.minValue(minMoveCount, maxMoveCount);
 
-    moveCount = this.findShortestPath(
+    maxMoveCount = this.findShortestPath(
       [move[0] - 1, move[1] + 2],
       finalCoords,
-      minMoveCount + 1,
+      moveCount + 1,
     );
+    minMoveCount = this.minValue(minMoveCount, maxMoveCount);
+
+    return minMoveCount;
   }
 
   knightMoves(initCoords, finalCoords) {
     this.findShortestPath(initCoords, finalCoords, 1);
   }
 }
+
+// const knightMoves = new KnightMoves();
 
 // init = 3, 3
 // {init: [3,3], edges: [[5,4], [4, 5] ...]}
