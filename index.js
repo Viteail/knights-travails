@@ -1,6 +1,24 @@
+class Vertex {
+  constructor(value) {
+    this.value = value;
+    this.edges = [];
+  }
+}
+
 class KnightMoves {
   constructor() {
-    this.boardCoords = [];
+    this.directions = [
+      [2, 1],
+      [1, 2],
+      [2, -1],
+      [1, -2],
+      [-2, -1],
+      [-1, -2],
+      [-2, 1],
+      [-1, 2],
+    ];
+    this.boardSize = 8;
+    this.graph = this.createGraph();
   }
 
   isValidCord(coords) {
@@ -9,94 +27,29 @@ class KnightMoves {
     else return true;
   }
 
-  minValue(a, b) {
-    if (!a) return b;
-    if (!b) return a;
-    else return Math.min(a, b);
-  }
+  createGraph() {
+    const graph = [];
+    console.log(this.boardSize);
 
-  isInBoardCoords = (move) => {
-    this.boardCoords.forEach((coords) => {
-      if (coords === move) return true;
-    });
-    return false;
-  };
+    for (let y = 0; y < this.boardSize; y++) {
+      for (let x = 0; x < this.boardSize; x++) {
+        let vertex = new Vertex([y, x]);
+        graph.push(vertex);
 
-  findShortestPath(move, finalCoords, moveCount) {
-    if (!this.isValidCord(move) || this.isInBoardCoords(move)) return null;
+        for (const [dy, dx] of this.directions) {
+          let newY = y + dy;
+          let newX = x + dx;
 
-    this.boardCoords.push(move);
-
-    if (move === finalCoords) return moveCount;
-
-    let maxMoveCount;
-    let minMoveCount = null;
-
-    maxMoveCount = this.findShortestPath(
-      [move[0] + 2, move[1] + 1],
-      finalCoords,
-      moveCount + 1,
-    );
-    minMoveCount = this.minValue(minMoveCount, maxMoveCount);
-
-    maxMoveCount = this.findShortestPath(
-      [move[0] + 1, move[1] + 2],
-      finalCoords,
-      moveCount + 1,
-    );
-    minMoveCount = this.minValue(minMoveCount, maxMoveCount);
-
-    maxMoveCount = this.findShortestPath(
-      [move[0] + 2, move[1] - 1],
-      finalCoords,
-      moveCount + 1,
-    );
-    minMoveCount = this.minValue(minMoveCount, maxMoveCount);
-
-    maxMoveCount = this.findShortestPath(
-      [move[0] + 1, move[1] - 1],
-      finalCoords,
-      moveCount + 1,
-    );
-    minMoveCount = this.minValue(minMoveCount, maxMoveCount);
-
-    maxMoveCount = this.findShortestPath(
-      [move[0] - 2, move[1] - 1],
-      finalCoords,
-      moveCount + 1,
-    );
-    minMoveCount = this.minValue(minMoveCount, maxMoveCount);
-
-    maxMoveCount = this.findShortestPath(
-      [move[0] - 1, move[1] - 2],
-      finalCoords,
-      moveCount + 1,
-    );
-    minMoveCount = this.minValue(minMoveCount, maxMoveCount);
-
-    maxMoveCount = this.findShortestPath(
-      [move[0] - 2, move[1] + 1],
-      finalCoords,
-      moveCount + 1,
-    );
-    minMoveCount = this.minValue(minMoveCount, maxMoveCount);
-
-    maxMoveCount = this.findShortestPath(
-      [move[0] - 1, move[1] + 2],
-      finalCoords,
-      moveCount + 1,
-    );
-    minMoveCount = this.minValue(minMoveCount, maxMoveCount);
-
-    return minMoveCount;
-  }
-
-  knightMoves(initCoords, finalCoords) {
-    this.findShortestPath(initCoords, finalCoords, 1);
+          if (this.isValidCord([newY, newX])) vertex.edges.push([newY, newX]);
+        }
+      }
+    }
+    return graph;
   }
 }
 
-// const knightMoves = new KnightMoves();
+const chessGame = new KnightMoves();
+console.log(chessGame.graph);
 
 // init = 3, 3
 // {init: [3,3], edges: [[5,4], [4, 5] ...]}
